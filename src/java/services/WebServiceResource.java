@@ -42,14 +42,15 @@ public class WebServiceResource {
     }
     
     @GET
-    @Path("getCompte/{id}")
+    @Path("autoriserPaiement/{id}/{montant}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCompte(@PathParam("id") int id) throws Exception{
+    public Response autoriserPaiement(@PathParam("id") int id, @PathParam("montant") int montant) throws Exception{
         Response response = null;
         try {
-            Compte compte = compteF.lireCompte(id);
-            GenericEntity<Compte> GECompte = new GenericEntity<Compte>(compte) {};
-            response = Response.status(Response.Status.OK).entity(GECompte).build();
+            Boolean paiementAutorise = compteF.paiement(id, montant);
+
+        JsonObject GEPaiement = Json.createObjectBuilder().add("Autorisation", paiementAutorise).build();
+        response = Response.status(Response.Status.OK).entity(GEPaiement).build();
         } catch (Exception e) {
             JsonObject retour = Json.createObjectBuilder().add("message", Utilitaire.getExceptionCause(e)).build();
             response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(retour).build();

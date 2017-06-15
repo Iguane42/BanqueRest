@@ -27,11 +27,21 @@ public class CompteFacade {
         return this.em;
     }
     
-    public Compte lireCompte(int id){
+    public Boolean paiement(int id, int montant){
         try{
-            return em.find(Compte.class, id);
+            Compte compte = em.find(Compte.class, id);
+            int resteSolde = compte.getSolde() - montant;
+            
+            if(resteSolde >= 0){
+                compte.setSolde(resteSolde);
+                System.err.println("OK");
+                return true;
+            } else{
+                System.err.println("NON");
+                return false;
+            }
+            
         } catch (Exception e){
-            System.err.println(Utilitaire.getExceptionCause(e));
             throw e;
         }
     }
